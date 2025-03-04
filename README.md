@@ -19,7 +19,7 @@ VScode & Copilot
 
 
 # 下载依赖
-pip3 install easyocr numpy time mss threading opencv-python queue datetime tkinter ttk 
+"""pip3 install easyocr numpy time mss threading opencv-python queue datetime tkinter ttk """
 
 
 
