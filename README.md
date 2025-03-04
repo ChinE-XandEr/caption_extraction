@@ -8,7 +8,7 @@
 
 
 # 环境
-Macbook Pro 14’ 2025 based on M4 
+Macbook Pro 14’ 2024 based on M4 
 
 python3.12.7
 
