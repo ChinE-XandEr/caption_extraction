@@ -8,7 +8,7 @@
 
 
 # 环境
-Macbook Pro 14’ 2024 based on M4 
+Macbook Pro 14’ 2025 based on M4 
 
 python3.12.7
 
@@ -19,7 +19,7 @@ VScode & Copilot
 
 
 # 下载依赖
-pip3 install easyocr numpy time mss threading opencv-python queue datetime tkinter ttk
+pip3 install easyocr numpy time mss threading opencv-python queue cdatetime tkinter ttk gc
 
 
 
