@@ -18,12 +18,14 @@ VScode & Copilot
 
 
 
-# 下载依赖
+# 仓库
 pip3 install easyocr numpy time mss threading opencv-python queue cdatetime tkinter ttk gc
 
 
 
 # 备用方案
+未经验证
+
 在浏览器中下载以下文件
 wget https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/craft_mlt_25k.pth
 wget https://github.com/JaidedAI/EasyOCR/releases/download/v1.3/english_g2.pth
