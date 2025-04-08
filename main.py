@@ -59,13 +59,15 @@ mouse_y = 0
 
 # 添加GPU加速切换逻辑
 def toggle_gpu_acceleration():
-    """切换GPU加速状态"""
+    # 切换GPU加速状态
     global USE_GPU
     USE_GPU = not USE_GPU
     if USE_GPU:
         gpu_acceleration_button.config(text="关闭GPU加速")
+        print("已开启GPU加速")
     else:
         gpu_acceleration_button.config(text="开启GPU加速")
+        print("已关闭GPU加速")
 
 #时时获取鼠标位置
 def mouse_position():
@@ -245,46 +247,15 @@ def start_stop():
 def handle_exception(exc_type, exc_value, exc_traceback):
     logging.error("未捕获的异常", exc_info=(exc_type, exc_value, exc_traceback))
 
-sys.excepthook = handle_exception
+# GPU 加速状态标签更新
+def update_gpu_status_label():
+    if USE_GPU:
+        gpu_status_label.config(text="GPU加速已开启", foreground="green")
+    else:
+        gpu_status_label.config(text="GPU加速已关闭", foreground="red")
+    root.after(5000, update_gpu_status_label)  # 每5秒检查一次
 
-if __name__ == "__main__":
-    # 创建GUI窗口
-    root = tk.Tk()
-    root.title("字幕提取工具")
-    root.geometry("400x250")
-
-    # 使用ttk主题
-    style = ttk.Style()
-    style.theme_use('clam')  # 尝试 'clam', 'alt', 'default', 'classic'
-
-    # 获取鼠标位置 启动/停止按钮
-    update_mouse_postion_button = ttk.Button(root, text="开始追踪", command=toggle_mouse_tracking)
-    update_mouse_postion_button.pack(pady=5)
-
-    # 开启/关闭GPU加速按钮
-    gpu_acceleration_button = ttk.Button(root, text="开启GPU加速", command=toggle_gpu_acceleration)
-    gpu_acceleration_button.pack(pady=5)
-
-    # 鼠标位置显示
-    the_mouse_position = ttk.Label(root, text="鼠标位置：x=0, y=0")
-    the_mouse_position.pack(pady=5)
-
-    # 启动鼠标位置更新
-    mouse_position() 
-
-    # 坐标显示
-    coordinates_label = ttk.Label(root, text=f"坐标: x1={x1}, y1={y1}, x3={x3}, y3={y3}")
-    coordinates_label.pack(pady=5)
-
-    # 启动/停止按钮
-    start_stop_button = ttk.Button(root, text="启动", command=start_stop)
-    start_stop_button.pack(pady=10)
-
-    # 状态标签
-    status_label = ttk.Label(root, text="程序未启动", foreground="red")
-    status_label.pack(pady=5)
-
-# 稳定运行状态标签
+# 稳定运行状态标签更新
 def update_stability_label():
     if stable:
         stability_label.config(text="运行稳定", foreground="green")
@@ -292,21 +263,89 @@ def update_stability_label():
         stability_label.config(text="运行不稳定", foreground="red")
     root.after(5000, update_stability_label)  # 每5秒检查一次
 
-stability_label = ttk.Label(root, text="正在初始化...", foreground="gray")
-stability_label.pack(pady=5)
-
-# 初始状态更新
-update_stability_label()
-
 def on_closing():
-    """程序关闭时的清理工作"""
+    # 程序关闭时的清理工作
     global running
     running = False
     logging.info("程序正在关闭...")
     root.quit()
 
-# 在 root 创建后添加
-root.protocol("WM_DELETE_WINDOW", on_closing)
+sys.excepthook = handle_exception
 
-# 运行GUI主循环
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("字幕提取工具")
+    root.geometry("264x454")
+
+    # 主框架
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    # 鼠标位置追踪框架
+    mouse_frame = ttk.LabelFrame(main_frame, text="鼠标位置追踪", padding="5")
+    mouse_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=5)
+
+    update_mouse_postion_button = ttk.Button(
+        mouse_frame,
+        text="开始追踪",
+        command=toggle_mouse_tracking,
+        width=20
+    )
+    update_mouse_postion_button.grid(row=0, column=0, padx=5, pady=5)
+
+    the_mouse_position = ttk.Label(mouse_frame, text="鼠标位置：x=0, y=0")
+    the_mouse_position.grid(row=1, column=0, padx=5, pady=5)
+
+    # GPU控制框架
+    gpu_frame = ttk.LabelFrame(main_frame, text="GPU设置", padding="5")
+    gpu_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=5)
+
+    gpu_acceleration_button = ttk.Button(
+        gpu_frame,
+        text="开启GPU加速",
+        command=toggle_gpu_acceleration,
+        width=20
+    )
+    gpu_acceleration_button.grid(row=0, column=0, padx=5, pady=5)
+
+    gpu_status_label = ttk.Label(gpu_frame, text="GPU加速已开启", foreground="green")
+    gpu_status_label.grid(row=1, column=0, padx=5, pady=5)
+
+    # 运行控制框架
+    control_frame = ttk.LabelFrame(main_frame, text="运行控制", padding="5")
+    control_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=5)
+
+    start_stop_button = ttk.Button(
+        control_frame,
+        text="启动",
+        command=start_stop,
+        width=20
+    )
+    start_stop_button.grid(row=0, column=0, padx=5, pady=5)
+
+    # 状态显示框架
+    status_frame = ttk.LabelFrame(main_frame, text="运行状态", padding="5")
+    status_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=5)
+
+    coordinates_label = ttk.Label(
+        status_frame,
+        text=f"截图区域: ({x1}, {y1}) - ({x3}, {y3})"
+    )
+    coordinates_label.grid(row=0, column=0, padx=5, pady=5)
+
+    status_label = ttk.Label(status_frame, text="程序未启动", foreground="red")
+    status_label.grid(row=1, column=0, padx=5, pady=5)
+
+    stability_label = ttk.Label(status_frame, text="正在初始化...", foreground="gray")
+    stability_label.grid(row=2, column=0, padx=5, pady=5)
+
+    # 启动更新函数
+    mouse_position()
+    update_stability_label()
+    update_gpu_status_label()
+
+    # 设置窗口关闭处理
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+
+    # 运行GUI主循环
+    root.mainloop()
